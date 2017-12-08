@@ -18,22 +18,23 @@ c = con.cursor()
 def login():
     data = request.get_json(force=True)
     try:
-        c.execute('SELECT password FROM Users WHERE email = ?', (data['email'],))
-        if not sha256_crypt.verify(c.fetchone()[0], data['password']):
+        c.execute('SELECT password FROM Users WHERE email = (?)', (data['email'],))
+        if not sha256_crypt.verify(data['password'], c.fetchone()[0]):
             return 'Wrong password!'    
         else:
-            c.execute('SELECT userId from Uses WHERE email = ?', (data['email'],))
+            c.execute('SELECT userId from Users WHERE email = (?)', (data['email'],))
             encoded_jwt = jwt.encode({'userId': c.fetchone()[0]}, jwt_key)
             return encoded_jwt
-    except:
-        return 'Error'
+    except Exception as e:
+        print(e)
+        return ''
         
 
 
 @app.route('/register', methods=['POST'])
 def register():
+    print('Request!')
     data = request.get_json(force=True)
-    password = sha256_crypt.encrypt()
     to_add = (data['firstName'],
               data['lastName'],
               data['email'],
@@ -43,8 +44,11 @@ def register():
               data['age'])
     print(data, '\n', to_add)
     try:
-        c.execute('INSERT INTO Users (firstName, lastName, email, password, gender, location, age) VALUES ?;', to_add)
+        c.execute('INSERT INTO Users (firstName, lastName, email, password, gender, location, age) VALUES (?, ?, ?, ?, ?, ?, ?)', to_add)
         con.commit()
         return '1'
-    except:
+    except Exception as e:
+        print(e)
         return '0'
+
+##@app.route('/get', methods=[''])
