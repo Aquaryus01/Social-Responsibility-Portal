@@ -57,21 +57,16 @@ def register():
 @app.route('/post_issue', methods=['POST'])
 def post_issue():
     data = request.get_json(force=True)
-    if 'file' not in request.files:
-        return 'No file!'
-    file = request.files['file']
     decoded_jwt = jwt.decode(data['jwt'], jwt_key)
     print(decoded_jwt)
-    saved_img = os.path.join(app.config['UPLOAD_FOLDER'],
-                           decoded_jwt['userId'] + '-' + file.filename)
-    file.save(os.path.join(saved_img))
     to_add = (decoded_jwt['userId'],
               data['title'],
               data['description'],
-              saved_img)
+              data['lat'],
+              data['long'])
     try:
-        c.execute('INSERT INTO Issues (userId, title, description, image) \
-            VALUES (?, ?, ?, ?)', to_add)
+        c.execute('INSERT INTO Issues (userId, title, description, lat, long) \
+            VALUES (?, ?, ?, ?, ?)', to_add)
         con.commit()
     except Exception as e:
         print(e)
@@ -89,10 +84,20 @@ def get_location():
     except Exception as e:
         print(e)
         return ''
-
     return c.fetchone()[0]
         
-    
+@app.route('/get_issues', methods=['GET'])
+def get_issues():
+    issues = {}
+    c.execute('SELECT issueId, title, description, email, lat, long FROM Issues\
+        INNER JOIN Users ON Users.userId = Issues.userId')
+    for issue in c.fetchall():
+        issues[issue[0]] = {'title': issue[1],
+                                    'description': issue[2],
+                                    'email': issue[3],
+                                    'lat': issue[4],
+                                    'long': issue[5]}
+    return json.dumps(issues)
 
 
     
