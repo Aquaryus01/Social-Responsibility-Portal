@@ -15,5 +15,4 @@ export class MainComponent implements OnInit {
     this.event = event;
     console.log(this.event);
   }
-
 }

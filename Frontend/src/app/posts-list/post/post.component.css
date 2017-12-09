@@ -14,11 +14,16 @@
 .profile-pic{
     margin-right: 5px;
     height: 40px;
-    width: 40px;
+    width: 100%;
     display: inline-block;
 }
 
 .name
 {
     display: inline-block;
+}
+
+agm-map {
+    height: 200px;
+    
 }

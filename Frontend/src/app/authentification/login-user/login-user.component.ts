@@ -31,7 +31,7 @@ export class LoginUserComponent implements OnInit {
   addPost(Post) {
       var parameter = JSON.stringify(Post);
       console.log(parameter);
-      const req = this.http.post("http://192.168.0.124:5000/login", parameter)
+      const req = this.http.post(this.user.getUrl()+"/login", parameter)
         .subscribe(
           res => {
             console.log(this.user.getToken() + "<-");
