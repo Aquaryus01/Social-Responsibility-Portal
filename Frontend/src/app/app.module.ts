@@ -9,6 +9,7 @@ import { AgmCoreModule } from '@agm/core';
 
 //Services
 import { UserService } from './services/user.service';
+import { IssueService } from './services/issue.service';
 
 //Componenets
 import { AppComponent } from './app.component';
@@ -17,22 +18,23 @@ import { AuthentificationComponent } from './authentification/authentification.c
 import { RegisterUserComponent } from './authentification/register-user/register-user.component';
 import { LoginUserComponent } from './authentification/login-user/login-user.component';
 import { NavBarComponent } from './main/nav-bar/nav-bar.component';
-import {PostsListComponent} from './main/map/posts-list/posts-list.component'
-import {PostComponent} from './main/map/posts-list/post/post.component'
+import {PostsListComponent} from './posts-list/posts-list.component'
+import {PostComponent} from './posts-list/post/post.component'
 import { MapComponent } from './main/map/map.component';
 
 //Guard
 import { AuthGuard } from './guards/auth.guard';
 import { Auth2Guard } from './guards/auth2.guard';
 import { IssueComponent } from './main/issue/issue.component';
-import { PostsComponent } from './posts/posts.component'
+
 
 
 
 const routes: Routes = [ 
-  { path: '', component: MainComponent, canActivate: [AuthGuard]},
+  { path: '', component: MainComponent},
   { path: 'authentification', component: AuthentificationComponent, canActivate: [Auth2Guard]},
-  { path: 'posts', component: PostsComponent, canActivate: [AuthGuard}, 
+  { path: 'issues', component: PostsListComponent}, 
+  { path: "**", component: MainComponent}
 
 ]
 
@@ -48,7 +50,6 @@ const routes: Routes = [
     PostsListComponent,
     PostComponent,
     IssueComponent,
-    PostsComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +62,8 @@ const routes: Routes = [
     })
   ],
   providers: [HttpModule, 
-              UserService, 
+              UserService,
+              IssueService, 
               AuthGuard,
               Auth2Guard],
   bootstrap: [AppComponent]

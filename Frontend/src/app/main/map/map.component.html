@@ -16,6 +16,7 @@
   <agm-marker
       *ngFor = "let issue of issues"
       [latitude]="issue.lat" 
-      [longitude]="issue.long">
+      [longitude]="issue.long"
+      [title] = "issue.title">
   </agm-marker>
 </agm-map>

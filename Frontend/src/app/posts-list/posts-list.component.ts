@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IssueService } from '../services/issue.service';
 
 @Component({
   selector: 'app-posts-list',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PostsListComponent implements OnInit {
 
-  constructor() { }
+  constructor(private issueSer: IssueService) { }
 
   ngOnInit() {
+    
   }
 
 }
