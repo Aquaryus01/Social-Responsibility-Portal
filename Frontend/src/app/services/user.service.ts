@@ -22,7 +22,8 @@ export class UserService {
 
     public user_perm()
     {
-      
+      if(this.localStorage.getItem('key')=="" || this.localStorage.getItem==null)
+        return 'default';
       return 'admin';
     }
 }

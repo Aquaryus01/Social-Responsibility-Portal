@@ -24,13 +24,15 @@ import { MapComponent } from './main/map/map.component';
 //Guard
 import { AuthGuard } from './guards/auth.guard';
 import { Auth2Guard } from './guards/auth2.guard';
-import { IssueComponent } from './main/issue/issue.component'
+import { IssueComponent } from './main/issue/issue.component';
+import { PostsComponent } from './posts/posts.component'
 
 
 
 const routes: Routes = [ 
   { path: '', component: MainComponent, canActivate: [AuthGuard]},
-  { path: 'authentification', component: AuthentificationComponent, canActivate: [Auth2Guard]}, 
+  { path: 'authentification', component: AuthentificationComponent, canActivate: [Auth2Guard]},
+  { path: 'posts', component: PostsComponent, canActivate: [AuthGuard}, 
 
 ]
 
@@ -45,7 +47,8 @@ const routes: Routes = [
     MapComponent,
     PostsListComponent,
     PostComponent,
-    IssueComponent
+    IssueComponent,
+    PostsComponent
   ],
   imports: [
     BrowserModule,

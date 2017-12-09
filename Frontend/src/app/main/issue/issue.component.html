@@ -1,1 +1,37 @@
-{{sendlatlong.lat}} este ba {{sendlatlong.lng}}
+<h3>Report Issue</h3>
+<form [formGroup]='rForm' (ngSubmit)="addIssue(rForm.value)">
+  <div class="form-group">
+      <label></label>
+      <input type="text" class="form-control" formControlName="title" placeholder="Enter title">
+      <div class="alert alert-danger" *ngIf="!rForm.controls['title'].valid && rForm.controls['title'].touched">
+          <strong>Title requiered!</strong> 
+      </div>
+  </div>
+  <!-- DECRIPTION -->
+  <div class="form-group">
+      <label>Description</label>
+      <input type="texteria" class="form-control" formControlName="description" placeholder="Enter description">
+      <div class="alert alert-danger" *ngIf="!rForm.controls['description'].valid && rForm.controls['description'].touched">
+          <strong>Description requiered!</strong> 
+      </div>
+  </div>
+  <!-- LOCATION -->
+  <div *ngIf="addLocationForm()" class="form-group">
+      <label>Location</label>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="sizing-addon2">Latitude</span>
+        <input type="text" formControlName="lat" class="form-control" [value]=sendlatlong.lat>  
+      </div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="sizing-addon2">Latitude</span>
+        <input type="text" formControlName="long" class="form-control" [value]=sendlatlong.lng>  
+      </div>
+  </div>
+  <div *ngIf="sendlatlong=='' || sendlatlong==null" class="alert alert-danger">
+      <strong>Click on Circle to select the location!</strong> 
+  </div>
+
+  <!-- IMG -->
+
+  <button type="submit" class="btn btn-primary" [disabled]='!rForm.valid'>Add Button</button>
+</form>
