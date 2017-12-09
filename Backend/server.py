@@ -3,6 +3,7 @@ import sqlite3
 import jwt
 import json
 import os
+import numpy
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from passlib.hash import sha256_crypt
@@ -16,6 +17,13 @@ jwt_key = 'OQU6kcW1J0Y0jG9uVnU5hznryLm1df7bMvuM30GY8Im6_RsmMv5fvW5pcft1QFYk'
 
 con = sqlite3.connect('data.db')
 c = con.cursor()
+
+def in_radius(radius, center_long, center_lat, other_long, other_lat):
+    center_long *= 111302.62
+    other_long *= 111302.62
+    center_lat *= 110574.61
+    other_lat *= 110574.61
+    return numpy.linalg.norm(numpy.array([center_lat, center_long]) - numpy.array([other_lat, other_long])) <= radius
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -88,20 +96,20 @@ def get_location():
         return ''
     return c.fetchone()[0]
         
-@app.route('/get_issues', methods=['GET'])
+@app.route('/get_issues', methods=['POST'])
 def get_issues():
+    data = request.get_json(force=True)
     issues = []
     c.execute('SELECT issueId, title, description, email, lat, long FROM Issues\
         INNER JOIN Users ON Users.userId = Issues.userId')
     for issue in c.fetchall():
-        issues.append({'id': issue[0],
-                       'title': issue[1],
-                       'description': issue[2],
-                       'email': issue[3],
-                       'lat': issue[4],
-                       'long': issue[5]})
-    print(issues)
-    print(json.dumps(issues))
+        if in_radius(data['radius'], data['long'], data['lat'], issue[5], issue[4]):
+            issues.append({'id': issue[0],
+                           'title': issue[1],
+                           'description': issue[2],
+                           'email': issue[3],
+                           'lat': issue[4],
+                           'long': issue[5]})            
     return make_response(json.dumps(issues))
 
 
