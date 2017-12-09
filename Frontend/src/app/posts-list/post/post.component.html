@@ -26,8 +26,8 @@
   <div>
       <div class="row">
         <div class="col-md-5">
-          <div class="btn btn-success form-control">Up vote</div>
-        </div>
+          <div (click)="voteUp()"class="btn btn-success form-control">Up vote</div>
+        </div> 
         <div class="col-md-2">
             <h4 style="text-align: center">{{issue.upVotes-issue.downVotes}}</h4>
         </div>

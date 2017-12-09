@@ -75,6 +75,8 @@ export class MapComponent implements OnInit {
       res => {
         this.issues = [];
         var a = res.json();
+        this.IssueSer.Issues = [];
+        this.IssueSer.Issues = a;
         for(var i=0; i<a.length; i++)
           this.issues.push(a[i]);    
       },
@@ -94,6 +96,8 @@ export class MapComponent implements OnInit {
       res => {
         this.issues = [];
         var a = res.json();
+        this.IssueSer.Issues = [];
+        this.IssueSer.Issues = a;
         for(var i=0; i<a.length; i++)
           this.issues.push(a[i]);    
       },

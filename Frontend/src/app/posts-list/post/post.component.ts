@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
+import {Http, Response} from '@angular/http';
+import { UserService } from '../../services/user.service';
 
 class Issue {
   id: number;
@@ -21,13 +23,25 @@ class Issue {
 export class PostComponent implements OnInit {
 
   @Input() issue: Issue;
-  lat: number = 45.77;
-  lng: number = 21.21;
   
-  constructor() { }
+  constructor(private http: Http,
+              private user: UserService) { }
 
   ngOnInit() {
     console.log(this.issue.description);
   }
 
+  voteUp()
+  { 
+    var params = {};
+    
+    const req = this.http.post(this.user.getUrl() + '/vote', params)
+    .subscribe(
+      res => {
+        
+      },
+      err => {
+        console.log(err);
+      }
+  );}
 }

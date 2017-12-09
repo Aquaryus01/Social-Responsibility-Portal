@@ -32,7 +32,9 @@
   </div>
 
   <!-- IMG -->
-
-  <button type="submit" class="btn btn-primary" [disabled]='!rForm.valid'>Add Issue
-  </button>
+  <button type="submit" class="btn btn-primary" [disabled]='!rForm.valid'>Submit Issue</button>
+  
 </form>
+
+<button (click) = "seeAllIssue()" type="submit" class="btn btn-primary" >See All Issue</button>
+<button (click) = "seeSelectedIssue()" type="submit" class="btn btn-primary" >See SelectedIssue</button>
