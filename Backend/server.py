@@ -69,7 +69,6 @@ def register():
 def post_issue():
     data = request.get_json(force=True)
     decoded_jwt = jwt.decode(data['jwt'], jwt_key)
-    print(decoded_jwt)
     to_add = (decoded_jwt['userId'],
               data['title'],
               data['description'],
@@ -101,8 +100,10 @@ def get_location():
 def get_issues():
     data = request.get_json(force=True)
     issues = []
-    c.execute('SELECT issueId, title, description, email, lat, long FROM Issues\
-        INNER JOIN Users ON Users.userId = Issues.userId')
+    c.execute('\
+        SELECT issueId, title, description, email, lat, long, upVotes, downVotes\
+        FROM Issues INNER JOIN Users ON Users.userId = Issues.userId\
+        WHERE archived = 0')
     for issue in c.fetchall():
         if in_radius(data['radius'], data['long'], data['lat'], issue[5], issue[4]):
             issues.append({'id': issue[0],
@@ -110,11 +111,13 @@ def get_issues():
                            'description': issue[2],
                            'email': issue[3],
                            'lat': issue[4],
-                           'long': issue[5]})            
+                           'long': issue[5],
+                           'upVotes': issue[6],
+                           'downVotes': issue[7]})            
     return make_response(json.dumps(issues))
 
 @app.route('/get_user_type', methods=['GET'])
-def is_admin():
+def user_type():
     data = request.get_json(force=True)
     decoded_jwt = jwt.decode(data['jwt'], jwt_key)
     if decoded_jwt['isAdmin']:
@@ -122,6 +125,16 @@ def is_admin():
     else:
         return 'user'
 
-##@app.route('/')
+@app.route('/is_owner', methods=['POST'])
+def is_owner():
+    data = request.get_json(force=True)
+    c.execute('SELECT userId FROM Issues WHERE issueId = ?',
+              (data['issueId'],))
+    decoded_jwt = jwt.decode(data['jwt'], jwt_key)
+    if c.fetchone()[0] == decoded_jwt['userId']:
+        return '1'
+    else:
+        return '0'
+    
 
     
