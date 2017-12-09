@@ -34,10 +34,6 @@ export class RegisterUserComponent implements OnInit {
   ngOnInit() {
   }
 
-  test(){
-    console.log(this.rForm.get('gender') + "da");
-  }
-
   addPost(Post) {
     var parameter = JSON.stringify(Post);
     const req = this.http.post(this.user.getUrl() + '/register', parameter)

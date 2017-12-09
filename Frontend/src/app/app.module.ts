@@ -4,17 +4,26 @@ import { RouterModule,  Routes } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import {FormsModule} from '@angular/forms'
 import {ReactiveFormsModule } from '@angular/forms';
+import { Http } from '@angular/http/src/http';
+import { AgmCoreModule } from '@agm/core';
+
+//Services
+import { UserService } from './services/user.service';
 
 //Componenets
 import { AppComponent } from './app.component';
 import { MainComponent } from './main/main.component';
 import { AuthentificationComponent } from './authentification/authentification.component';
-import { Http } from '@angular/http/src/http';
-import { UserService } from './services/user.service';
 import { RegisterUserComponent } from './authentification/register-user/register-user.component';
 import { LoginUserComponent } from './authentification/login-user/login-user.component';
+import { NavBarComponent } from './main/nav-bar/nav-bar.component';
+import {PostsListComponent} from './main/map/posts-list/posts-list.component'
+import {PostComponent} from './main/map/posts-list/post/post.component'
+
+//Guard
 import { AuthGuard } from './guards/auth.guard';
 import { Auth2Guard } from './guards/auth2.guard';
+import { MapComponent } from './main/map/map.component';
 
 
 const routes: Routes = [ 
@@ -30,13 +39,20 @@ const routes: Routes = [
     AuthentificationComponent,
     RegisterUserComponent,
     LoginUserComponent,
+    NavBarComponent,
+    MapComponent,
+    PostsListComponent,
+    PostComponent,
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
     HttpModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyAjoYgGxB6x7Q7fRvkH9Sc6x07uqEUPT2c'
+    })
   ],
   providers: [HttpModule, 
               UserService, 

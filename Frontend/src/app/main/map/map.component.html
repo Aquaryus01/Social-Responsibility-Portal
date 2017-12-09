@@ -1,0 +1,21 @@
+<agm-map 
+  [latitude]="lat" 
+  [longitude]="lng"
+  [zoom] = 12>
+  <agm-circle
+    (circleClick) = "create_temp_mark($event)"
+    [latitude]="lat" 
+    [longitude]="lng" 
+    [radius]="5000"
+    [fillColor]="'red'"
+    [circleDraggable]="true"
+    [editable]="true">
+
+
+  </agm-circle>
+  <agm-marker
+  *ngFor = "let issue of issues"
+  [latitude]="issue.lat" 
+  [longitude]="issue.long">
+</agm-marker>
+</agm-map>

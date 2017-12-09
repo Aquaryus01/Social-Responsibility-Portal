@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class UserService {
-    private url: string = 'http://192.168.0.124:5000';
+    private url: string = 'http://192.168.1.155:5000';
     private localStorage = window.localStorage;
     public getToken()
     {

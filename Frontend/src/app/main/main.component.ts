@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import io from 'socket.io-client';
 
 @Component({
   selector: 'app-main',
@@ -8,6 +7,8 @@ import io from 'socket.io-client';
 })
 export class MainComponent implements OnInit {
   constructor() { }
+
   ngOnInit() {
   }
+
 }
