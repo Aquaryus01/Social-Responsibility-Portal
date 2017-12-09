@@ -2,10 +2,10 @@
 <div class="container">
     <div class="row" style="margin-top: 50px; background: white;">
         <div class="col-md-6">
-            <app-map></app-map>
+            <app-map (recivelatlong) = "send_lat_long($event)"></app-map>
         </div>
         <div class="col-md-6">
-
+            <app-issue [sendlatlong] = "event"></app-issue>
         </div>
     </div>
 </div>
