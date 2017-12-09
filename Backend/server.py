@@ -34,8 +34,9 @@ def login():
             return 'Wrong password!'    
         else:
             c.execute('SELECT userId, admin from Users WHERE email = (?)', (data['email'],))
-            encoded_jwt = jwt.encode({'userId': c.fetchone()[0],
-                                      'isAdmin': c.fetchone()[1]},
+            user_data = c.fetchone()
+            encoded_jwt = jwt.encode({'userId': user_data[0],
+                                      'isAdmin': user_data[1]},
                                      jwt_key)
             return encoded_jwt
     except Exception as e:
@@ -112,5 +113,15 @@ def get_issues():
                            'long': issue[5]})            
     return make_response(json.dumps(issues))
 
+@app.route('/get_user_type', methods=['GET'])
+def is_admin():
+    data = request.get_json(force=True)
+    decoded_jwt = jwt.decode(data['jwt'], jwt_key)
+    if decoded_jwt['isAdmin']:
+        return 'admin'
+    else:
+        return 'user'
+
+##@app.route('/')
 
     
