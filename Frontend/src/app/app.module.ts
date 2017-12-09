@@ -19,11 +19,13 @@ import { LoginUserComponent } from './authentification/login-user/login-user.com
 import { NavBarComponent } from './main/nav-bar/nav-bar.component';
 import {PostsListComponent} from './main/map/posts-list/posts-list.component'
 import {PostComponent} from './main/map/posts-list/post/post.component'
+import { MapComponent } from './main/map/map.component';
 
 //Guard
 import { AuthGuard } from './guards/auth.guard';
 import { Auth2Guard } from './guards/auth2.guard';
-import { MapComponent } from './main/map/map.component';
+import { IssueComponent } from './main/issue/issue.component'
+
 
 
 const routes: Routes = [ 
@@ -43,6 +45,7 @@ const routes: Routes = [
     MapComponent,
     PostsListComponent,
     PostComponent,
+    IssueComponent
   ],
   imports: [
     BrowserModule,

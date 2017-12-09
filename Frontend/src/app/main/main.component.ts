@@ -7,8 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainComponent implements OnInit {
   constructor() { }
-
+  event:any = "";
   ngOnInit() {
+  }
+
+  send_lat_long(event: any){
+    this.event = event;
+    console.log(this.event);
   }
 
 }
