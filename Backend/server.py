@@ -3,7 +3,7 @@ import sqlite3
 import jwt
 import json
 import os
-from flask import Flask, request
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from passlib.hash import sha256_crypt
 
@@ -25,8 +25,10 @@ def login():
         if not sha256_crypt.verify(data['password'], c.fetchone()[0]):
             return 'Wrong password!'    
         else:
-            c.execute('SELECT userId from Users WHERE email = (?)', (data['email'],))
-            encoded_jwt = jwt.encode({'userId': c.fetchone()[0]}, jwt_key)
+            c.execute('SELECT userId, admin from Users WHERE email = (?)', (data['email'],))
+            encoded_jwt = jwt.encode({'userId': c.fetchone()[0],
+                                      'isAdmin': c.fetchone()[1]},
+                                     jwt_key)
             return encoded_jwt
     except Exception as e:
         print(e)
@@ -88,16 +90,19 @@ def get_location():
         
 @app.route('/get_issues', methods=['GET'])
 def get_issues():
-    issues = {}
+    issues = []
     c.execute('SELECT issueId, title, description, email, lat, long FROM Issues\
         INNER JOIN Users ON Users.userId = Issues.userId')
     for issue in c.fetchall():
-        issues[issue[0]] = {'title': issue[1],
-                                    'description': issue[2],
-                                    'email': issue[3],
-                                    'lat': issue[4],
-                                    'long': issue[5]}
-    return json.dumps(issues)
+        issues.append({'id': issue[0],
+                       'title': issue[1],
+                       'description': issue[2],
+                       'email': issue[3],
+                       'lat': issue[4],
+                       'long': issue[5]})
+    print(issues)
+    print(json.dumps(issues))
+    return make_response(json.dumps(issues))
 
 
     
