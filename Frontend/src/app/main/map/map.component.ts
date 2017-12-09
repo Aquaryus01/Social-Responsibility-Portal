@@ -55,33 +55,41 @@ export class MapComponent implements OnInit {
 
   postIssuesRadius(post) {
     this.radius = post.radius;
-    // const req = this.http.post(this.user.getUrl() + '/post_issues', post)
-    //   .subscribe(
-    //     res => {
-    //       var a = res.json();
-    //       for(var i=0; i<a.length; i++)
-    //         this.issues.push(a[i]);    
-    //     },
-    //     err => {
-    //       console.log(err);
-    //     }
-    // );
-    console.log(post);
+    var a = {};
+    a['radius'] = this.radius;
+    a['long'] = this.lng;
+    a['lat'] = this.lat;
+    const req = this.http.post(this.user.getUrl() + '/get_issues', JSON.stringify(a))
+    .subscribe(
+      res => {
+        this.issues = [];
+        var a = res.json();
+        for(var i=0; i<a.length; i++)
+          this.issues.push(a[i]);    
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   postIssues(post) {
-    // const req = this.http.post(this.user.getUrl() + '/post_issues', post)
-    //   .subscribe(
-    //     res => {
-    //       var a = res.json();
-    //       for(var i=0; i<a.length; i++)
-    //         this.issues.push(a[i]);    
-    //     },
-    //     err => {
-    //       console.log(err);
-    //     }
-    // );
-    console.log(post);
+    var a = {};
+    a['radius'] = this.radius;
+    a['long'] = this.lng;
+    a['lat'] = this.lat;
+    const req = this.http.post(this.user.getUrl() + '/get_issues', JSON.stringify(a))
+    .subscribe(
+      res => {
+        this.issues = [];
+        var a = res.json();
+        for(var i=0; i<a.length; i++)
+          this.issues.push(a[i]);    
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   recive_mark_location(event: any){

@@ -19,4 +19,10 @@ export class UserService {
     {
       return this.url;
     }
+
+    public user_perm()
+    {
+      
+      return 'admin';
+    }
 }
