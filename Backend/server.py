@@ -18,23 +18,6 @@ jwt_key = 'OQU6kcW1J0Y0jG9uVnU5hznryLm1df7bMvuM30GY8Im6_RsmMv5fvW5pcft1QFYk'
 con = sqlite3.connect('data.db')
 c = con.cursor()
 
-def update_votes():
-    c.execute('SELECT issueId FROM Votes')
-    vals = c.fetchall()
-    for issue_id in vals:
-        s_up = 0
-        s_down = 0
-        c.execute('SELECT vote FROM Votes WHERE issueId = ?',
-                  (issue_id[0],))
-        for v in c.fetchall():
-            if v[0] == 1:
-                s_up += 1
-            elif v[0] == -1:
-                s_down += 1
-        c.execute('UPDATE Issues SET upVotes = ?, downVotes = ? WHERE issueId = ?',
-                  (s_up, s_down, issue_id[0]))
-        con.commit()
-
 def in_radius(radius, center_long, center_lat, other_long, other_lat):
     center_long *= 111302.62
     other_long *= 111302.62
@@ -42,26 +25,11 @@ def in_radius(radius, center_long, center_lat, other_long, other_lat):
     other_lat *= 110574.61
     return numpy.linalg.norm(numpy.array([center_lat, center_long]) - numpy.array([other_lat, other_long])) <= radius
 
-def check_vote(user_id, issue_id, vote):    
-    c.execute('SELECT vote FROM Votes WHERE userId = ? AND issueId = ?',
-              (user_id, issue_id))
-    try:
-        db_vote = c.fetchone()[0]
-    except:
-        return 1
-    
-    if db_vote == vote:
-        return 0
-    elif db_vote == vote * (-1):
-        return 2
-    else:
-        return 1
-
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json(force=True)
     try:
-        c.execute('SELECT password FROM Users WHERE email = (?)', (data['email'],))
+        c.execute('SELECT password FROM Users WHERE email = (?)', (str(data['email']),))
         if not sha256_crypt.verify(data['password'], c.fetchone()[0]):
             return 'Wrong password!'    
         else:
@@ -128,44 +96,46 @@ def get_location():
         return ''
     return c.fetchone()[0]
         
-@app.route('/get_issues', methods=['POST', 'GET'])
+@app.route('/get_issues', methods=['POST'])
 def get_issues():
     if request.method == 'POST':
         data = request.get_json(force=True)
         issues = []
         c.execute('\
-            SELECT issueId, title, description, email, lat, long, upVotes, downVotes\
+            SELECT issueId, title, description, email, lat, long\
             FROM Issues INNER JOIN Users ON Users.userId = Issues.userId\
             WHERE archived = 0')
         for issue in c.fetchall():
-            if in_radius(data['radius'], data['long'], data['lat'], issue[5], issue[4]):
-                issues.append({'id': issue[0],
-                               'title': issue[1],
-                               'description': issue[2],
-                               'email': issue[3],
+            if in_radius(data['radius'],
+                         data['long'],
+                         data['lat'],
+                         issue[5],
+                         issue[4]):
+                issues.append({'id': str(issue[0]),
+                               'title': str(issue[1]),
+                               'description': str(issue[2]),
+                               'email': str(issue[3]),
                                'lat': issue[4],
-                               'long': issue[5],
-                               'upVotes': issue[6],
-                               'downVotes': issue[7]})            
+                               'long': issue[5]})
+        print('selected:', len(issues))
         return make_response(json.dumps(issues))
-    elif request.method == 'GET':
-        issues = []
-        c.execute('\
-            SELECT issueId, title, description, email, lat, long, upVotes, downVotes\
-            FROM Issues INNER JOIN Users ON Users.userId = Issues.userId\
-            WHERE archived = 0')
-        for issue in c.fetchall():
-            issues.append({'id': issue[0],
-                           'title': issue[1],
-                           'description': issue[2],
-                           'email': issue[3],
-                           'lat': issue[4],
-                           'long': issue[5],
-                           'upVotes': issue[6],
-                           'downVotes': issue[7]})            
-        return make_response(json.dumps(issues))
+##    elif request.method == 'GET':
+##        issues = []
+##        c.execute('\
+##            SELECT issueId, title, description, email, lat, long\
+##            FROM Issues INNER JOIN Users ON Users.userId = Issues.userId\
+##            WHERE archived = 0')
+##        for issue in c.fetchall():
+##            issues.append({'id': str(issue[0]),
+##                           'title': str(issue[1]),
+##                           'description': str(issue[2]),
+##                           'email': str(issue[3]),
+##                           'lat': issue[4],
+##                           'long': issue[5]})
+##        print('all:', len(issues))
+##        return make_response(json.dumps(issues))
 
-@app.route('/get_user_type', methods=['GET'])
+@app.route('/get_user_type', methods=['POST'])
 def user_type():
     data = request.get_json(force=True)
     decoded_jwt = jwt.decode(data['jwt'], jwt_key)
@@ -176,7 +146,11 @@ def user_type():
 
 @app.route('/is_owner', methods=['POST'])
 def is_owner():
-    data = request.get_json(force=True)
+    try:
+        data = request.get_json(force=True)
+    except Exception as e:
+        print(e)
+        return '0'
     c.execute('SELECT userId FROM Issues WHERE issueId = ?',
               (data['issueId'],))
     decoded_jwt = jwt.decode(data['jwt'], jwt_key)
@@ -185,28 +159,89 @@ def is_owner():
     else:
         return '0'
 
-@app.route('/vote', methods=['POST'])
-def vote():
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
     data = request.get_json(force=True)
     decoded_jwt = jwt.decode(data['jwt'], jwt_key)
-    if check_vote(decoded_jwt['userId'], data['issueId'], data['vote']) == 1:
-        c.execute('INSERT INTO Votes (userId, issueId, vote) VALUES (?, ?, ?)',
-                  (decoded_jwt['userId'], data['issueId'], data['vote']))
-        con.commit()
-        update_votes()
-        return '1'
-    
-    elif check_vote(decoded_jwt['userId'], data['issueId'], data['vote']) == 2:
-        c.execute('UPDATE Votes SET vote = ? WHERE issueId = ? AND userId = ?',
-                  (data['vote'], data['issueId'], decoded_jwt['userId']))
-        con.commit()
-        update_votes()
-        return '1'
-    
+    c.execute('SELECT password FROM Users WHERE userId = ?', (data['jwt'],))
+    if sha256_crypt.verify(data['old_password'], c.fetchone()[0]):
+        if data['new_password1'] == data['new_password2']:
+            try:
+                if data['firstName']:
+                    c.execute('UPDATE Users SET\
+                        firstName=? WHERE userId = ?', (data['firstName'],
+                                                        decoded_jwt['userId']))
+            except:
+                pass
+            try:
+                if data['lastName']:
+                    c.execute('UPDATE Users SET\
+                        lastName=? WHERE userId = ?', (data['lastName'],
+                                                        decoded_jwt['userId']))
+            except:
+                pass
+            try:
+                if data['new_password1']:
+                    c.execute('UPDATE Users SET\
+                        password=? WHERE userId = ?',
+                              (sha256_crypt.encrypt(data['new_password1']),
+                                                        decoded_jwt['userId']))
+            except:
+                pass
+            try:
+                if data['location']:
+                    c.execute('UPDATE Users SET\
+                        location=? WHERE userId = ?', (data['location'],
+                                                        decoded_jwt['userId']))
+            except:
+                pass
+            con.commit()
+            return '1'
+        else:
+            return '0'
     else:
-        update_votes()
         return '0'
+
+@app.route('/report', methods=['POST'])
+def report():
+    data = request.get_json(force=True)
+    decoded_jwt = jwt.decode(data['jwt'], jwt_key)
+    c.execute('INSERT (userId, issueId, title, description)\
+        INTO Reports VALUES (?, ?, ?, ?)', (
+            decoded_jwt['userId'],
+            data['issueId'],
+            data['title'],
+            data['description']))
+    con.commit()
+
+    return '1'
+
+@app.route('/edit_issue', methods=['POST'])
+def edit_issue():
+    data = request.get_json(force=True)
+    decoded_jwt = jwt.decode(data['jwt'], jwt_key)
+    print(str(data['issueId']), decoded_jwt)
+    c.execute('UPDATE Issues SET title=?, description=? WHERE issueId=?',
+              (str(data['title']), str(data['description']), str(data['issueId'])))
+    con.commit()
+
+    return '1'
+
+@app.route('/get_reports', methods=['GET'])
+def get_reports():
+    to_send = []
+    c.execute('SELECT * FROM Reports')
+    vals = c.fetchall()
+    for val in vals:
+        to_send.append({
+            'id': val[0],
+            'userId': val[1],
+            'issueId': val[2],
+            'title': val[3],
+            'description': val[4]})
+    return make_response(json.dumps(to_send))
 
 if __name__ == '__main__':
     app.run(host='192.168.43.128')
+
 
