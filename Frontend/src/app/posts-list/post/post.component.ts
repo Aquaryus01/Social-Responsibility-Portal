@@ -10,8 +10,6 @@ class Issue {
   email: string;
   lat: number;
   long: number;
-  upvote: number;
-  downvote: number;
 }
 
 @Component({
@@ -23,25 +21,43 @@ class Issue {
 export class PostComponent implements OnInit {
 
   @Input() issue: Issue;
-  
+  isOwner:boolean = false;
+
   constructor(private http: Http,
-              private user: UserService) { }
+              private user: UserService) { 
+              }
 
   ngOnInit() {
-    console.log(this.issue.description);
-  }
+    var post = {};
+    post["issueId"] =this.issue.id;
+    post["jwt"] = this.user.getToken();
+    var parameter = JSON.stringify(post);
+    const req = this.http.post(this.user.getUrl()+"/is_owner", parameter)
+      .subscribe(
+        res => {
+          this.isOwner = res.json();
+        },
+        err => {
+          console.log("Error occured");
+        }
+    );}
 
-  voteUp()
-  { 
-    var params = {};
-    
-    const req = this.http.post(this.user.getUrl() + '/vote', params)
-    .subscribe(
-      res => {
-        
-      },
-      err => {
-        console.log(err);
-      }
-  );}
+    test()
+    {
+      var post = {};
+      post["issueId"] = this.issue.id;
+      post["description"] = this.issue.description;
+      post["title"] = this.issue.title;
+      post["jwt"] = this.user.getToken();
+      var parameter = JSON.stringify(post);
+      alert(parameter);
+      const req = this.http.post(this.user.getUrl()+"/edit_issue", parameter)
+        .subscribe(
+          res => {
+            console.log(res.json());
+          },
+          err => {
+            console.log("Error occured");
+          }
+      );}
 }

@@ -17,7 +17,7 @@ import { MainComponent } from './main/main.component';
 import { AuthentificationComponent } from './authentification/authentification.component';
 import { RegisterUserComponent } from './authentification/register-user/register-user.component';
 import { LoginUserComponent } from './authentification/login-user/login-user.component';
-import { NavBarComponent } from './main/nav-bar/nav-bar.component';
+import { NavBarComponent } from './nav-bar/nav-bar.component';
 import {PostsListComponent} from './posts-list/posts-list.component'
 import {PostComponent} from './posts-list/post/post.component'
 import { MapComponent } from './main/map/map.component';
@@ -26,14 +26,18 @@ import { MapComponent } from './main/map/map.component';
 import { AuthGuard } from './guards/auth.guard';
 import { Auth2Guard } from './guards/auth2.guard';
 import { IssueComponent } from './main/issue/issue.component';
+import { AdminComponent } from './admin/admin.component';
+import { OverviewComponent } from './admin/overview/overview.component';
 
 
 
 
 const routes: Routes = [ 
   { path: '', component: MainComponent},
-  { path: 'authentification', component: AuthentificationComponent, canActivate: [Auth2Guard]},
+  { path: 'authenticate', component: AuthentificationComponent, canActivate: [AuthGuard]},
+  { path: 'signOut', component: AuthentificationComponent, canActivate: [Auth2Guard]},
   { path: 'issues', component: PostsListComponent}, 
+  { path: 'admin', component: AdminComponent},
   { path: "**", component: MainComponent}
 
 ]
@@ -50,6 +54,8 @@ const routes: Routes = [
     PostsListComponent,
     PostComponent,
     IssueComponent,
+    AdminComponent,
+    OverviewComponent,
   ],
   imports: [
     BrowserModule,

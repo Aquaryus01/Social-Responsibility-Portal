@@ -14,7 +14,7 @@ export class LoginUserComponent implements OnInit {
   @Output() open: EventEmitter<any> = new EventEmitter();
   
   change_to_register(){
-    console.log('da');
+
     this.open.emit(false);
   }
   rForm: FormGroup;
@@ -30,14 +30,13 @@ export class LoginUserComponent implements OnInit {
 
   addPost(Post) {
       var parameter = JSON.stringify(Post);
-      console.log(parameter);
       const req = this.http.post(this.user.getUrl()+"/login", parameter)
         .subscribe(
           res => {
-            console.log(this.user.getToken() + "<-");
             if(res.text())
             {
                 this.user.setToken(res.text());
+                this.user.user_state = this.user.reciv();
                 this.router.navigate(['/']);
             }
             else

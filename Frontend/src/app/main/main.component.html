@@ -1,11 +1,13 @@
 <app-nav-bar></app-nav-bar>
-<div class="container">
+<div *ngIf = "user.user_state!='default'" class="container">
     <div class="row" style="margin-top: 50px; background: white;">
         <div class="col-md-6">
             <app-map (recivelatlong) = "send_lat_long($event)" ></app-map>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
             <app-issue [sendlatlong] = "event"></app-issue>
         </div>
     </div>
 </div>
+
+<app-map (recivelatlong) = "send_lat_long($event)" *ngIf = "user.user_state=='default'"></app-map>

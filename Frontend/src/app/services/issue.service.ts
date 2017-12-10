@@ -10,8 +10,6 @@ class Issue {
   email: string;
   lat: number;
   long: number;
-  upVotes: number;
-  downVotes: number;
 }
 
 @Injectable()
@@ -27,6 +25,7 @@ export class IssueService {
     const req = http.get(user.getUrl() + '/get_issues')
         .subscribe(
           res => {
+            
             this.allIsues = res.json();
             console.log(this.allIsues);
           },

@@ -33,8 +33,8 @@
 
   <!-- IMG -->
   <button type="submit" class="btn btn-primary" [disabled]='!rForm.valid'>Submit Issue</button>
-  
+  <button  (click) = "seeSelectedIssue()" class="btn btn-primary" >See SelectedIssue</button>
 </form>
 
-<button (click) = "seeAllIssue()" type="submit" class="btn btn-primary" >See All Issue</button>
-<button (click) = "seeSelectedIssue()" type="submit" class="btn btn-primary" >See SelectedIssue</button>
+
+

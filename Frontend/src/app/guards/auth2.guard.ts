@@ -13,12 +13,8 @@ export class Auth2Guard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): boolean 
     {
-      if(!this.user.getToken())
-      {
-          return true;
-      }
-      
-      this.router.navigate(['/']);
-      return false;
+
+      this.user.setToken("");
+      return true;
   }
 }

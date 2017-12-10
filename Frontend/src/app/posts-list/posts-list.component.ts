@@ -8,8 +8,6 @@ class Issue {
   email: string;
   lat: number;
   long: number;
-  upVotes: number;
-  downVotes: number;
 }
 
 @Component({
@@ -21,13 +19,12 @@ export class PostsListComponent implements OnInit {
 
   issues: Issue[] =  [];
   constructor(private issueSer: IssueService) { 
+    console.log(this.issueSer.allIsues);
     this.issueSer.allIsuesUpdated.subscribe((status: null) =>
     this.issues = [], this.issues = this.issueSer.allIsues)
 
     this.issueSer.selectedIsuesUpdated.subscribe((status: null) =>
     this.issues = [] ,this.issues = this.issueSer.Issues)
-
-
   }
 
   ngOnInit() {

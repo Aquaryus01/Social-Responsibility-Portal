@@ -12,8 +12,6 @@ class Issue {
   email: string;
   lat: number;
   long: number;
-  upVotes: number;
-  downVotes: number;
 }
 
 @Component({
