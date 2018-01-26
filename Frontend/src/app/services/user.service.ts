@@ -3,7 +3,7 @@ import {Http, Response} from '@angular/http';
 
 @Injectable()
 export class UserService {
-    private url: string = 'http://192.168.43.128:5000';
+    private url: string = 'http://79.116.244.150:5000';
     private localStorage = window.localStorage;
     public user_state = this.reciv();
     

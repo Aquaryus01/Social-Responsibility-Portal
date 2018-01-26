@@ -33,6 +33,7 @@ export class LoginUserComponent implements OnInit {
       const req = this.http.post(this.user.getUrl()+"/login", parameter)
         .subscribe(
           res => {
+            console.log(res.text());
             if(res.text())
             {
                 this.user.setToken(res.text());

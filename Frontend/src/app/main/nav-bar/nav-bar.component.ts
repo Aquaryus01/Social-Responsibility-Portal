@@ -16,8 +16,6 @@ export class NavBarComponent implements OnInit {
   key: string = "";
   ngOnInit() {
     this.key = this.user.getToken();
-    this.userState = this.user.user_perm();
-    console.log(this.user.user_perm());
   }
 
   logOut(){
